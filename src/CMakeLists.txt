@@ -1,0 +1,40 @@
+set(LIBNAME ${PROJECT_NAME})
+
+set(PKGCONFIG_FILE ${PROJECT_NAME}.pc)
+
+set(
+    ${LIBNAME}_PUBLIC_HEADERS
+
+    boinc-rpc-cpp.hpp
+    client.hpp
+    models.hpp
+    rpc.hpp
+    util.hpp
+)
+
+set(
+    ${LIBNAME}_SOURCES
+
+    client.cpp
+    rpc.cpp
+    util.cpp
+)
+
+include_directories (
+    ${GLIBMM_INCLUDE_DIRS}
+    ${LIBXMLMM_INCLUDE_DIRS}
+)
+
+include("GNUInstallDirs")
+
+add_library(${LIBNAME} SHARED ${${LIBNAME}_SOURCES})
+set_property(TARGET ${LIBNAME} PROPERTY CXX_STANDARD 14)
+set_property(TARGET ${LIBNAME} PROPERTY CXX_STANDARD_REQUIRED ON)
+
+configure_file(${PKGCONFIG_FILE}.in ${CMAKE_BINARY_DIR}/${PKGCONFIG_FILE} @ONLY)
+
+target_link_libraries(${LIBNAME} ${GLIBMM_LIBRARIES} ${LIBXMLMM_LIBRARIES})
+
+install(TARGETS ${LIBNAME} DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+install(FILES ${${LIBNAME}_PUBLIC_HEADERS} DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_INCLUDEDIR}/${LIBNAME})
+install(FILES ${CMAKE_BINARY_DIR}/${PKGCONFIG_FILE} DESTINATION ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}/pkgconfig)
